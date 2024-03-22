@@ -1,11 +1,12 @@
 import "../reset.css";
 import "../App.css";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import NoTodos from "./NoTodos";
 import TodoForm from "./TodoForm";
 import TodoList from "./TodoList";
 import useLocalStorage from "../hooks/useLocalStorage";
 import TodosContext from "../context/TodosContext";
+import { CSSTransition, SwitchTransition } from "react-transition-group";
 
 function App() {
   const [name, setName] = useLocalStorage("name", "");
@@ -42,7 +43,6 @@ function App() {
         todosFiltered,
       }}
     >
-      <div className="todo-app-container">
         <div className="todo-app">
           <div className="name-container">
             <h2>What is your name?</h2>
@@ -61,10 +61,35 @@ function App() {
           </div>
           <h2>Todo App</h2>
           <TodoForm></TodoForm>
+          <SwitchTransition mode="out-in">
+            <CSSTransition
+              key={todos.length > 0}
+              timeout={300}
+              classNames="slide-vertical"
+              unmountOnExit
+            >
+              {todos.length > 0 ? <TodoList></TodoList> : <NoTodos></NoTodos>}
+            </CSSTransition>
+          </SwitchTransition>
 
-          {todos.length > 0 ? <TodoList></TodoList> : <NoTodos></NoTodos>}
+          {/* <CSSTransition
+            in={todos.length > 0}
+            timeout={300}
+            classNames="slide-vertical"
+            unmountOnExit
+          >
+            <TodoList></TodoList>
+          </CSSTransition>
+          <CSSTransition
+            in={todos.length === 0}
+            timeout={300}
+            classNames="slide-vertical"
+            unmountOnExit
+          >
+            <NoTodos></NoTodos>
+          </CSSTransition> */}
         </div>
-      </div>
+     
     </TodosContext.Provider>
   );
 }
